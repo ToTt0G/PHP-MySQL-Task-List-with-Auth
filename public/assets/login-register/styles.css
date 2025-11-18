@@ -1,0 +1,15 @@
+#login-form,
+#register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+a {
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+a:hover {
+  color: var(--accent);
+}

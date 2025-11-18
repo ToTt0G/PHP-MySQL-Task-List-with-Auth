@@ -1,0 +1,34 @@
+services:
+  task-app-environment:
+    container_name: tasks-app_php-apache
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - "8081:80"
+    command: bash -c "composer install && apache2-foreground"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./.env
+
+  db:
+    image: mysql:latest
+    container_name: tasks-app_mysql-db
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10

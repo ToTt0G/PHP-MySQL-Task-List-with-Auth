@@ -1,0 +1,195 @@
+@layer reset, base;
+@import url("./reset.css") layer(reset);
+
+:root {
+  color-scheme: light dark;
+  --bg: light-dark(#f6f7fb, #0f1226);
+  --bg-accent: light-dark(#eef0f7, #15183a);
+  --text: light-dark(#1e2130, #e8eaf6);
+  --muted: light-dark(#505469, #b8bbd9);
+  --primary: light-dark(#5b63ff, #7c5cff);
+  --accent: light-dark(#00bcd4, #00d4ff);
+  --card: light-dark(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.08));
+  --border: light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.12));
+  --shadow: light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.35));
+  --focus: light-dark(#fff, #2f3243);
+  --error: #ff4242;
+  --error-accent: #ff6b6b;
+  --toast-border-color: rgba(255, 255, 255, 0.25);
+  --toast-shadow-color: rgba(0, 0, 0, 0.25);
+  --card-inset-shadow: rgba(255, 255, 255, 0.04);
+  --ghost-hover-bg: rgba(255, 255, 255, 0.06);
+  --toast-text: white;
+  --bg-subtle-accent-1: rgba(255, 255, 255, 0.04);
+  --bg-subtle-accent-2: rgba(255, 255, 255, 0.02);
+  --bg-subtle-accent-3: rgba(255, 255, 255, 0.18);
+  --bg-subtle-accent-light: rgba(0, 0, 0, 0.12);
+  --bg-scrollbar-thumb: rgba(255, 255, 255, 0.12);
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --height-1: 2.8rem;
+  --padding-1: 1rem;
+}
+
+@layer base {
+  body {
+    display: grid;
+    place-items: center;
+    min-height: 100svh;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text);
+    background: radial-gradient(
+        1200px 800px at 10% 10%,
+        light-dark(#d1dcfa, #1a1d3d) 0%,
+        var(--bg) 45%
+      )
+      fixed;
+    transition: background 0.3s ease;
+  }
+
+  /* Card (glassmorphism) */
+  .card {
+    width: min(920px, 92vw);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: clamp(18px, 3vw, 28px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 60px -10px var(--shadow),
+      inset 0 1px 0 var(--card-inset-shadow);
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--padding-1) * 0.9);
+  }
+
+  /* Top bar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand {
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    color: var(--muted);
+  }
+
+  /* Title + subtitle */
+  h1 {
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 800;
+    line-height: 1.15;
+    background: linear-gradient(
+      90deg,
+      light-dark(#2c304a, #fff),
+      light-dark(#4d5386, #d6d9ff) 60%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transition: background 0.3s ease;
+  }
+  .lead {
+    color: var(--muted);
+    font-size: clamp(14px, 1.8vw, 16px);
+  }
+
+  /* Inputs + buttons */
+  .button,
+  input {
+    padding: 0 1rem;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-weight: 600;
+    height: var(--height-1);
+    color: var(--text);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.3s ease,
+      filter 0.2s ease;
+  }
+
+  input {
+    outline: none;
+  }
+  input::placeholder {
+    color: var(--muted);
+  }
+
+  /* Override browser autofill styles */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--focus) inset !important;
+    -webkit-text-fill-color: var(--text) !important;
+    caret-color: var(--text) !important;
+  }
+
+  /* Primary button */
+  .button {
+    cursor: pointer;
+    box-shadow: 0 10px 24px -10px var(--shadow);
+  }
+  .button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+  }
+  .button:active {
+    transform: translateY(0);
+  }
+
+  /* Ghost variant */
+  .ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+  }
+  .ghost:hover {
+    background: var(--ghost-hover-bg);
+  }
+
+  /* Toast notifications */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--toast-border-color);
+    box-shadow: 0 12px 28px var(--toast-shadow-color);
+    backdrop-filter: blur(6px);
+    z-index: 9999;
+    color: var(--toast-text);
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    animation: fadeInOut 3s ease-in-out forwards;
+  }
+
+  .toast.error {
+    background: linear-gradient(135deg, var(--error), var(--error-accent));
+  }
+
+  /* Animations */
+  @keyframes fadeInOut {
+    0%,
+    100% {
+      opacity: 0;
+      transform: translateY(-10px) translateX(-50%);
+    }
+    10%,
+    90% {
+      opacity: 1;
+      transform: translateY(0) translateX(-50%);
+    }
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  button {
+    border: 0;
+  }
+}
