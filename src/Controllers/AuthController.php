@@ -99,8 +99,8 @@ class AuthController
             if ($remember_me) {
                 $session_token = $this->sessionsModel->createSession($result['user']['id']);
                 if ($session_token) {
-                    // Set cookie for 30 days
-                    setcookie('remember_me', $session_token, time() + (86400 * 30), "/"); 
+                    // Set cookie for 30 days, HttpOnly=true
+                    setcookie('remember_me', $session_token, time() + (86400 * 30), "/", "", false, true); 
                 }
             }
         }
@@ -113,7 +113,7 @@ class AuthController
         if (isset($_COOKIE['remember_me'])) {
             $this->sessionsModel->deleteSession($_COOKIE['remember_me']);
             unset($_COOKIE['remember_me']);
-            setcookie('remember_me', '', time() - 3600, '/'); // expire the cookie
+            setcookie('remember_me', '', time() - 3600, '/', "", false, true); // expire the cookie
         }
         session_destroy();
         header('Location: /login');

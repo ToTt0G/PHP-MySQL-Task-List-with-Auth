@@ -37,7 +37,7 @@ class AuthMiddleware {
                 if ($session) {
                     // Refresh the session token in the database and the cookie
                     self::$sessionsModel->refreshSession($_COOKIE['remember_me']);
-                    setcookie('remember_me', $_COOKIE['remember_me'], time() + (86400 * 30), "/"); // 30 days
+                    setcookie('remember_me', $_COOKIE['remember_me'], time() + (86400 * 30), "/", "", false, true); // 30 days
 
                     $user = self::$usersModel->getUserById($session['user_id']);
                     if ($user) {
@@ -45,7 +45,7 @@ class AuthMiddleware {
                         $_SESSION['user_id'] = $user['id'];
                         $_SESSION['name'] = $user['name'];
                         // The user is now logged in, you can proceed.
-                        header('Location: /dashboard');
+                        header('Location: /tasks');
                         exit();
                     }
                 }
