@@ -4,11 +4,19 @@ const emailInput = document.getElementById("email-input");
 const passwordInput = document.getElementById("password-input");
 const nameInput = document.getElementById("name-input");
 
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  return meta ? meta.getAttribute('content') : '';
+}
+
 const api = {
   async authenticateUser(email, password, rememberMe = false) {
     const response = await fetch("api/auth/login", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: { 
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRF-Token": getCsrfToken()
+      },
       body:
         `email=${encodeURIComponent(email)}` +
         `&password=${encodeURIComponent(password)}` +
@@ -20,7 +28,10 @@ const api = {
   async registerUser(email, name, password) {
     const response = await fetch("api/auth/register", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: { 
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRF-Token": getCsrfToken()
+      },
       body: `email=${encodeURIComponent(email)}&name=${encodeURIComponent(
         name
       )}&password=${encodeURIComponent(password)}`,

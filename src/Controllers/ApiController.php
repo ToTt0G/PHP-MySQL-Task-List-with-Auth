@@ -6,6 +6,10 @@ use App\Controllers\UsersController;
 use App\Controllers\TaskController;
 use App\Controllers\AdminController;
 
+use App\Models\Tasks;
+use App\Models\Users;
+use App\Models\Sessions;
+
 class ApiController
 {
     private $conn;
@@ -27,13 +31,16 @@ class ApiController
         switch ($endpoint) {
             case 'auth':
             case 'users':
-                $authController = new AuthController($this->conn);
+                $usersModel = new Users($this->conn);
+                $sessionsModel = new Sessions($this->conn);
+                $authController = new AuthController($usersModel, $sessionsModel);
                 $authController->handleApiRequest($request_uri, $method);
                 break;
             
             // Add this block to handle /api/tasks
             case 'tasks':
-                $taskController = new TaskController($this->conn);
+                $tasksModel = new Tasks($this->conn);
+                $taskController = new TaskController($tasksModel);
                 $taskController->handleApiRequest($request_uri, $method);
                 break;
 

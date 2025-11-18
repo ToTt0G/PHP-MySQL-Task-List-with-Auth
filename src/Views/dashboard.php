@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?php echo \App\Helpers\Csrf::generate(); ?>">
     <title>Admin - Dashboard</title>
-    <link rel="stylesheet" href="/assets/styles.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="/assets/dashboard/styles.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo \App\Helpers\Assets::versioned('assets/styles.css'); ?>">
+    <link rel="stylesheet" href="<?php echo \App\Helpers\Assets::versioned('assets/dashboard/styles.css'); ?>">
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -20,6 +21,6 @@
             <!-- Cards will be rendered here -->
         </div>
     </div>
-    <script src="/assets/dashboard/script.js?v=<?php echo time(); ?>"></script>
+    <script src="<?php echo \App\Helpers\Assets::versioned('assets/dashboard/script.js'); ?>"></script>
 </body>
 </html>

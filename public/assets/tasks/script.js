@@ -10,6 +10,11 @@ const trashcanIcon =
 // Centralized state
 let tasks = [];
 
+function getCsrfToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  return meta ? meta.getAttribute('content') : '';
+}
+
 // --- API Layer ---
 const api = {
   async fetchTasks() {
@@ -21,7 +26,10 @@ const api = {
   async addTask(task) {
     const response = await fetch("api/tasks", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: { 
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRF-Token": getCsrfToken()
+      },
       body: `task=${encodeURIComponent(task)}`,
     });
     if (!response.ok) throw new Error("Failed to add task");
@@ -31,7 +39,10 @@ const api = {
   async editTask(id, task) {
     const response = await fetch("api/tasks", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: { 
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRF-Token": getCsrfToken()
+      },
       body: `edit_task_id=${encodeURIComponent(
         id
       )}&edit_task=${encodeURIComponent(task)}`,
@@ -43,7 +54,10 @@ const api = {
   async deleteTask(id) {
     const response = await fetch("api/tasks", {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      headers: { 
+        "Content-Type": "application/x-www-form-urlencoded",
+        "X-CSRF-Token": getCsrfToken()
+      },
       body: `delete_task_id=${encodeURIComponent(id)}`,
     });
     if (!response.ok) throw new Error("Failed to delete task");
@@ -51,7 +65,12 @@ const api = {
   },
 
   async clearAllTasks() {
-    const response = await fetch("api/tasks", { method: "DELETE" });
+    const response = await fetch("api/tasks", { 
+      method: "DELETE",
+      headers: {
+        "X-CSRF-Token": getCsrfToken()
+      }
+    });
     if (!response.ok) throw new Error("Failed to clear tasks");
     return await response.json();
   },
@@ -66,7 +85,12 @@ const api = {
   },
 
   async logout() {
-    const response = await fetch("api/auth/logout", { method: "POST" });
+    const response = await fetch("api/auth/logout", { 
+      method: "POST",
+      headers: {
+        "X-CSRF-Token": getCsrfToken()
+      }
+    });
     if (!response.ok) throw new Error("Failed to logout");
     return await response.json();
   },

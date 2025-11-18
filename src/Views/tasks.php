@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="assets/styles.css?v=<?php echo time(); ?>">
-    <link rel="stylesheet" href="assets/tasks/index.css?v=<?php echo time(); ?>">
+    <meta name="csrf-token" content="<?php echo \App\Helpers\Csrf::generate(); ?>">
+    <link rel="stylesheet" href="<?php echo \App\Helpers\Assets::versioned('assets/styles.css'); ?>">
+    <link rel="stylesheet" href="<?php echo \App\Helpers\Assets::versioned('assets/tasks/index.css'); ?>">
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
     <title>To-Do List - Js, PHP, MySQL</title>
 </head>
@@ -29,6 +30,6 @@
     
     
 
-    <script src="assets/tasks/script.js?v=<?php echo time(); ?>"></script>
+    <script src="<?php echo \App\Helpers\Assets::versioned('assets/tasks/script.js'); ?>"></script>
 </body>
 </html>

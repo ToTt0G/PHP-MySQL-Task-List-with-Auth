@@ -3,22 +3,33 @@ namespace App\Controllers;
 
 use App\Models\Users;
 use App\Models\Sessions;
+use App\Helpers\Csrf;
 
 class AuthController
 {
     private $usersModel;
     private $sessionsModel;
 
-    public function __construct($db_connection)
+    public function __construct(Users $usersModel, Sessions $sessionsModel)
     {
-        $this->usersModel = new Users($db_connection);
-        $this->sessionsModel = new Sessions($db_connection);
+        $this->usersModel = $usersModel;
+        $this->sessionsModel = $sessionsModel;
     }
 
     public function handleApiRequest($request_uri, $method)
     {
         if (strpos($request_uri, '/api/auth') === 0) {
             if ($method === "POST") {
+                // CSRF Protection
+                $headers = getallheaders();
+                $token = $headers['X-CSRF-Token'] ?? $_POST['csrf_token'] ?? '';
+                
+                if (!Csrf::verify($token)) {
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Invalid CSRF token']);
+                    return;
+                }
+
                 switch ($request_uri) {
                     case '/api/auth/register':
                         $this->register();
