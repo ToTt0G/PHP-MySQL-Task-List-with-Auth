@@ -22,7 +22,7 @@ class AuthController
             if ($method === "POST") {
                 // CSRF Protection
                 $headers = getallheaders();
-                $token = $headers['X-CSRF-Token'] ?? $_POST['csrf_token'] ?? '';
+                $token = $headers['X-CSRF-Token'] ?? '';
                 
                 if (!Csrf::verify($token)) {
                     http_response_code(403);
@@ -103,6 +103,8 @@ class AuthController
                     setcookie('remember_me', $session_token, time() + (86400 * 30), "/", "", false, true); 
                 }
             }
+            // Remove password from the response
+            unset($result['user']['password']);
         }
         echo json_encode($result);
         exit;
