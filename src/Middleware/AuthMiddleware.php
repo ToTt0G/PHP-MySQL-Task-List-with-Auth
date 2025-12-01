@@ -4,16 +4,19 @@ namespace App\Middleware;
 use App\Models\Sessions;
 use App\Models\Users;
 
-class AuthMiddleware {
+class AuthMiddleware
+{
     private static $sessionsModel;
     private static $usersModel;
 
-    public static function init($db_connection) {
+    public static function init($db_connection)
+    {
         self::$sessionsModel = new Sessions($db_connection);
         self::$usersModel = new Users($db_connection);
     }
 
-    public static function handle() {
+    public static function handle()
+    {
         if (isset($_SESSION['user_id'])) {
             // The user is already logged in with an active PHP session.
             // No need to refresh the 'remember_me' session here.
@@ -62,6 +65,6 @@ class AuthMiddleware {
             }
             exit();
         }
-        
+
     }
 }

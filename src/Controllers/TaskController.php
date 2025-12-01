@@ -4,21 +4,24 @@ namespace App\Controllers;
 use App\Models\Tasks;
 use App\Helpers\Csrf;
 
-class TaskController {
+class TaskController
+{
     private $tasksModel;
 
-    public function __construct(Tasks $tasksModel) {
+    public function __construct(Tasks $tasksModel)
+    {
         $this->tasksModel = $tasksModel;
     }
 
-    public function handleApiRequest($request_uri, $method) {
+    public function handleApiRequest($request_uri, $method)
+    {
         $user_id = $_SESSION['user_id'];
 
         // CSRF Protection for state-changing methods
         if ($method !== 'GET') {
             $headers = getallheaders();
             $token = $headers['X-CSRF-Token'] ?? '';
-            
+
             if (!Csrf::verify($token)) {
                 http_response_code(403);
                 echo json_encode(['error' => 'Invalid CSRF token']);
@@ -60,13 +63,15 @@ class TaskController {
         }
     }
 
-    private function getTasks($user_id) {
+    private function getTasks($user_id)
+    {
         $tasks = $this->tasksModel->getTasks($user_id);
         echo json_encode($tasks);
     }
 
-    private function pollTasks($user_id) {
-        $client_task_count = isset($_GET['count']) ? (int)$_GET['count'] : -1;
+    private function pollTasks($user_id)
+    {
+        $client_task_count = isset($_GET['count']) ? (int) $_GET['count'] : -1;
         $tasks = $this->tasksModel->shortPolling($client_task_count, $user_id);
 
         if ($tasks !== null) {
@@ -76,7 +81,8 @@ class TaskController {
         }
     }
 
-    private function deleteAllTasks($user_id) {
+    private function deleteAllTasks($user_id)
+    {
         if ($this->tasksModel->deleteAllTasks($user_id) !== false) {
             echo json_encode(["success" => true]);
         }

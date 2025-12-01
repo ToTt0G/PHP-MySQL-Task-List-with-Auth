@@ -71,31 +71,6 @@ A simple task management application built with PHP (custom MVC framework), MySQ
     http://localhost:8081
     ```
 
-## Docker Management
-
-### Restarting Containers
-To restart the application containers (e.g., after a configuration change):
-```bash
-docker-compose restart
-```
-
-### Restarting without Database Disruption
-To rebuild or restart the web application container without stopping the database (preserving the database state and uptime):
-
-1.  Restart only the PHP/Apache container:
-    ```bash
-    docker-compose restart task-app-environment
-    ```
-
-2.  If you need to rebuild the image (e.g., after changing the Dockerfile):
-    ```bash
-    docker-compose up -d --no-deps --build task-app-environment
-    ```
-    *   `--no-deps`: Don't restart linked services (like the database).
-    *   `--build`: Rebuild the image before starting.
-
-> **Note**: The database data is currently stored in the container's ephemeral storage (unless you have modified `docker-compose.yml` to use a volume). Running `docker-compose down` will destroy the database container and **wipe all data**. To persist data across container removals, ensure you add a volume mapping to the `db` service in `docker-compose.yml`.
-
 ## Project Structure
 
 ```
