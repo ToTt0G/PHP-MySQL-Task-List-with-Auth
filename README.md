@@ -9,11 +9,12 @@ A simple task management application built with PHP (custom MVC framework), MySQ
 ## Features
 
 - **User Authentication**:
+
   - Register and Login.
   - Session management with "Remember Me" functionality.
   - Secure password hashing (Bcrypt).
   - CSRF Protection for state-changing requests.
-  
+
   ![Login Screen](github/login.png)
 
 - **Task Management**:
@@ -21,9 +22,10 @@ A simple task management application built with PHP (custom MVC framework), MySQ
   - Tasks are private to each user.
   - **Short Polling**: The frontend periodically checks for updates to keep the task list in sync across multiple tabs/devices.
 - **Admin Dashboard**:
+
   - View all sessions, tasks, and users.
   - View details of specific users.
-  
+
   ![Admin Dashboard](github/admin-dashboard.png)
 
 - **Architecture**:
@@ -116,6 +118,7 @@ To rebuild or restart the web application container without stopping the databas
 To completely **wipe the database** and start fresh (e.g., to re-register the admin account):
 
 1.  Bring down the containers and remove the data volume:
+
     ```bash
     docker-compose down -v
     ```
