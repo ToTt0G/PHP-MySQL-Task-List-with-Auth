@@ -4,7 +4,7 @@
 
 A simple task management application built with PHP (custom MVC framework), MySQL, and Docker. This application allows users to register, manage tasks, and features real-time-like updates via short polling.
 
-![App Preview](github/app-preview.png)
+![App Preview](github/tasks.png)
 
 ## Features
 
@@ -14,7 +14,7 @@ A simple task management application built with PHP (custom MVC framework), MySQ
   - Secure password hashing (Bcrypt).
   - CSRF Protection for state-changing requests.
   
-  ![Login Screen](github/login-screen.png)
+  ![Login Screen](github/login.png)
 
 - **Task Management**:
   - Create, Read, Update, and Delete (CRUD) tasks.
