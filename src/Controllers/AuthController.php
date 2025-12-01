@@ -21,10 +21,21 @@ class AuthController
         if (strpos($request_uri, '/api/auth') === 0) {
             if ($method === "POST") {
                 // CSRF Protection
-                $headers = getallheaders();
-                $token = $headers['X-CSRF-Token'] ?? '';
+                $token = '';
+                if (function_exists('getallheaders')) {
+                    $headers = array_change_key_case(getallheaders(), CASE_LOWER);
+                    $token = $headers['x-csrf-token'] ?? '';
+                }
+                
+                if (empty($token) && isset($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+                    $token = $_SERVER['HTTP_X_CSRF_TOKEN'];
+                }
                 
                 if (!Csrf::verify($token)) {
+                    error_log("CSRF Verification Failed.");
+                    error_log("Received Token: " . $token);
+                    error_log("Session Token: " . ($_SESSION['csrf_token'] ?? 'NOT SET'));
+                    
                     http_response_code(403);
                     echo json_encode(['error' => 'Invalid CSRF token']);
                     return;
