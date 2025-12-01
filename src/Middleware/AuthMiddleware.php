@@ -21,7 +21,7 @@ class AuthMiddleware {
             // Check if the user is an admin
             $user = self::$usersModel->getUserById($_SESSION['user_id']);
             if ($user['role'] !== 'admin') {
-                if (strpos($_SERVER['REQUEST_URI'], '/api/admin') === 0 || strpos($_SERVER['REQUEST_URI'], '/admin') === 0 || strpos($_SERVER['REQUEST_URI'], '/api/users/:id') === 0) {
+                if (strpos($_SERVER['REQUEST_URI'], '/api/admin') === 0 || strpos($_SERVER['REQUEST_URI'], '/admin') === 0 || preg_match('#^/api/users/\d+#', $_SERVER['REQUEST_URI'])) {
                     header('Content-Type: application/json');
                     http_response_code(403); // Forbidden
                     echo json_encode(['success' => false, 'message' => 'Forbidden']);
