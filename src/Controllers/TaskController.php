@@ -37,17 +37,10 @@ class TaskController
             } elseif (isset($_POST["delete_task_id"])) {
                 $this->deleteTask($user_id);
             }
-        } elseif ($method === "GET") {
-            if (strpos($request_uri, '/api/tasks/poll') !== false) {
-                $this->pollTasks($user_id);
-            } else {
-                $this->getTasks($user_id);
-            }
         }
     }
 
-    private function createTask($user_id)
-    {
+    private function createTask($user_id) {
         $task = htmlspecialchars($_POST["task"], ENT_QUOTES, 'UTF-8');
         $id = uniqid();
         if ($this->tasksModel->addTask($task, $id, $user_id)) {
@@ -55,8 +48,7 @@ class TaskController
         }
     }
 
-    private function updateTask($user_id)
-    {
+    private function updateTask($user_id) {
         $edit_id = $_POST["edit_task_id"];
         $edit_task = htmlspecialchars($_POST["edit_task"], ENT_QUOTES, 'UTF-8');
         if ($this->tasksModel->editTask($edit_id, $edit_task, $user_id)) {
@@ -64,8 +56,7 @@ class TaskController
         }
     }
 
-    private function deleteTask($user_id)
-    {
+    private function deleteTask($user_id) {
         $delete_id = $_POST["delete_task_id"];
         if ($this->tasksModel->deleteTask($delete_id, $user_id)) {
             echo json_encode(["success" => true]);
