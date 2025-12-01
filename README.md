@@ -1,5 +1,7 @@
 # Tasks Application
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Click_Here-blue?style=for-the-badge&logo=firefox)](https://tasks.redsunsetfarm.com)
+
 A simple task management application built with PHP (custom MVC framework), MySQL, and Docker. This application allows users to register, manage tasks, and features real-time-like updates via short polling.
 
 ![App Preview](github/app-preview.png)
