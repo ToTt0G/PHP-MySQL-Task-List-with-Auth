@@ -14,7 +14,7 @@ class Sessions
 
     private function generateUUID()
     {
-        $data = $data ?? random_bytes(16);
+        $data = random_bytes(16);
         assert(strlen($data) == 16);
 
         $data[6] = chr(ord($data[6]) & 0x0f | 0x40);

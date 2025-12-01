@@ -34,6 +34,12 @@ class TaskController {
             } elseif (isset($_POST["delete_task_id"])) {
                 $this->deleteTask($user_id);
             }
+        } elseif ($method === "GET") {
+            if (strpos($request_uri, '/api/tasks/poll') !== false) {
+                $this->pollTasks($user_id);
+            } else {
+                $this->getTasks($user_id);
+            }
         }
     }
 
