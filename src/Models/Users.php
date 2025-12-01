@@ -39,7 +39,7 @@ class Users
         $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = :email");
         $stmt->execute([':email' => $email]);
         if ($stmt->fetch()) {
-            return ["success" => false, "message" => "Registration failed"];
+            return ["success" => false, "message" => "Email already registered"];
         }
 
         //Only Ryder is Admin

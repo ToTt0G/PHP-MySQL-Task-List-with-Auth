@@ -29,6 +29,20 @@ class TaskController
             }
         }
 
+        if ($method === "GET") {
+            if (isset($_GET['count'])) {
+                $this->pollTasks($user_id);
+            } else {
+                $this->getTasks($user_id);
+            }
+            return;
+        }
+
+        if ($method === "DELETE") {
+            $this->deleteAllTasks($user_id);
+            return;
+        }
+
         if ($method === "POST") {
             if (isset($_POST["task"])) {
                 $this->createTask($user_id);
