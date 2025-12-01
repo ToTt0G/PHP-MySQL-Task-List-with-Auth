@@ -1,0 +1,20 @@
+vendor/
+.env
+000-default.conf
+public/assets/styles copy.css
+
+# OS System Files
+.DS_Store
+Thumbs.db
+
+# IDE Settings
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Docker
+docker-compose.override.yml
