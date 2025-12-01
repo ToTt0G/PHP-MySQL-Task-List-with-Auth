@@ -1,6 +1,7 @@
 services:
   task-app-environment:
     container_name: tasks-app_php-apache
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
