@@ -12,6 +12,33 @@ document.addEventListener("DOMContentLoaded", function () {
     div.textContent = str == null ? "" : String(str);
     return div.innerHTML;
   }
+  
+  function getCsrfToken() {
+    const meta = document.querySelector('meta[name="csrf-token"]');
+    return meta ? meta.getAttribute('content') : '';
+  }
+
+  async function deleteSession(sessionId, listItem) {
+      if (!confirm("Are you sure you want to revoke this session?")) return;
+
+      try {
+          const response = await fetch(`/api/admin/sessions/${sessionId}`, {
+              method: "DELETE",
+              headers: {
+                  "X-CSRF-Token": getCsrfToken()
+              }
+          });
+
+          if (response.ok) {
+              listItem.remove();
+          } else {
+              alert("Failed to delete session");
+          }
+      } catch (error) {
+          console.error("Error deleting session:", error);
+          alert("Error deleting session");
+      }
+  }
 
   (async () => {
     try {
@@ -50,25 +77,34 @@ document.addEventListener("DOMContentLoaded", function () {
         card.className = "user-card";
 
         // Build sessions list
-        const sessionsHtml =
-          userSessions.length > 0
-            ? `<ul class="list">
-                ${userSessions
-                  .map(
-                    (s) => `
-                  <li>
-                    <div>Session ID: <code>${escapeHtml(s.id)}</code></div>
-                    <div>Token: <code>${escapeHtml(
-                      s.session_token
-                    )}</code></div>
-                    <div>Created: ${escapeHtml(
-                      s.created_at
-                    )} · Expires: ${escapeHtml(s.expires_at)}</div>
-                  </li>`
-                  )
-                  .join("")}
-              </ul>`
-            : `<div class="empty">No current sessions</div>`;
+        let sessionsHtml;
+        if (userSessions.length > 0) {
+            const ul = document.createElement('ul');
+            ul.className = 'list';
+            userSessions.forEach(s => {
+                const li = document.createElement('li');
+                // Mask the token for display
+                const maskedToken = s.session_token ? s.session_token.substring(0, 8) + '...' : 'N/A';
+                
+                li.innerHTML = `
+                    <div style="margin-bottom: 8px;"><strong>ID:</strong> <code>${escapeHtml(s.id)}</code></div>
+                    <div style="margin-bottom: 8px;"><strong>Token:</strong> <code>${escapeHtml(maskedToken)}</code></div>
+                    <div style="margin-bottom: 8px;"><strong>Created:</strong> ${escapeHtml(s.created_at)}</div>
+                    <div style="margin-bottom: 16px;"><strong>Expires:</strong> ${escapeHtml(s.expires_at)}</div>
+                    <button class="button sm ghost danger">Revoke</button>
+                `;
+                
+                const btn = li.querySelector('button');
+                btn.addEventListener('click', () => deleteSession(s.id, li));
+                ul.appendChild(li);
+            });
+            sessionsHtml = ul;
+        } else {
+            const div = document.createElement('div');
+            div.className = 'empty';
+            div.textContent = 'No current sessions';
+            sessionsHtml = div;
+        }
 
         // Build tasks list
         const tasksHtml =
@@ -78,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   .map(
                     (t) => `
                   <li>
-                    <div>Task ID: <code>${escapeHtml(t.id)}</code></div>
+                    <div><strong>ID:</strong> <code>${escapeHtml(t.id)}</code></div>
                     <div>${escapeHtml(t.value)}</div>
                   </li>`
                   )
@@ -94,9 +130,8 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="meta">Email: ${escapeHtml(u.email)}</div>
           <div class="meta">Joined: ${escapeHtml(u.created_at)}</div>
 
-          <div class="section">
+          <div class="section sessions-section">
             <h3>Current Sessions (${userSessions.length})</h3>
-            ${sessionsHtml}
           </div>
 
           <div class="section">
@@ -104,6 +139,9 @@ document.addEventListener("DOMContentLoaded", function () {
             ${tasksHtml}
           </div>
         `;
+        
+        // Append the session list element (DOM object) to the correct section
+        card.querySelector('.sessions-section').appendChild(sessionsHtml);
 
         container.appendChild(card);
       });

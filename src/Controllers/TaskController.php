@@ -19,8 +19,15 @@ class TaskController
 
         // CSRF Protection for state-changing methods
         if ($method !== 'GET') {
-            $headers = getallheaders();
-            $token = $headers['X-CSRF-Token'] ?? '';
+            $token = '';
+            if (function_exists('getallheaders')) {
+                $headers = array_change_key_case(getallheaders(), CASE_LOWER);
+                $token = $headers['x-csrf-token'] ?? '';
+            }
+
+            if (empty($token) && isset($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+                $token = $_SERVER['HTTP_X_CSRF_TOKEN'];
+            }
 
             if (!Csrf::verify($token)) {
                 http_response_code(403);

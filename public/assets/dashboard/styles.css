@@ -81,4 +81,21 @@ code {
   border: 1px solid var(--border);
   padding: 1px 6px;
   border-radius: 6px;
+  font-size: 0.85em;
+}
+
+/* New styles for danger buttons in dashboard */
+.button.sm {
+  font-size: 12px;
+  padding: 4px 8px;
+  height: auto;
+  line-height: 1;
+}
+.button.danger {
+  color: #ff4444;
+  border-color: rgba(255, 68, 68, 0.3);
+}
+.button.danger:hover {
+  background-color: rgba(255, 68, 68, 0.1);
+  border-color: #ff4444;
 }

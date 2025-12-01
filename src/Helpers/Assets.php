@@ -3,10 +3,17 @@ namespace App\Helpers;
 
 class Assets {
     public static function versioned($path) {
-        $absolutePath = __DIR__ . '/../../public/' . ltrim($path, '/');
+        // Ensure we are checking the correct file on disk
+        // Remove any leading slash from $path for filesystem check
+        $relativePath = ltrim($path, '/');
+        $absolutePath = __DIR__ . '/../../public/' . $relativePath;
+        
+        $version = '';
         if (file_exists($absolutePath)) {
-            return $path . '?v=' . filemtime($absolutePath);
+            $version = '?v=' . filemtime($absolutePath);
         }
-        return $path;
+        
+        // Always return a root-relative path (starting with /)
+        return '/' . $relativePath . $version;
     }
 }
