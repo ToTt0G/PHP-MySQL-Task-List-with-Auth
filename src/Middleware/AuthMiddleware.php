@@ -4,16 +4,19 @@ namespace App\Middleware;
 use App\Models\Sessions;
 use App\Models\Users;
 
-class AuthMiddleware {
+class AuthMiddleware
+{
     private static $sessionsModel;
     private static $usersModel;
 
-    public static function init($db_connection) {
+    public static function init($db_connection)
+    {
         self::$sessionsModel = new Sessions($db_connection);
         self::$usersModel = new Users($db_connection);
     }
 
-    public static function handle() {
+    public static function handle()
+    {
         if (isset($_SESSION['user_id'])) {
             // The user is already logged in with an active PHP session.
             // No need to refresh the 'remember_me' session here.
@@ -21,7 +24,7 @@ class AuthMiddleware {
             // Check if the user is an admin
             $user = self::$usersModel->getUserById($_SESSION['user_id']);
             if ($user['role'] !== 'admin') {
-                if (strpos($_SERVER['REQUEST_URI'], '/api/admin') === 0 || strpos($_SERVER['REQUEST_URI'], '/admin') === 0 || strpos($_SERVER['REQUEST_URI'], '/api/users/:id') === 0) {
+                if (strpos($_SERVER['REQUEST_URI'], '/api/admin') === 0 || strpos($_SERVER['REQUEST_URI'], '/admin') === 0 || preg_match('#^/api/users/\d+#', $_SERVER['REQUEST_URI'])) {
                     header('Content-Type: application/json');
                     http_response_code(403); // Forbidden
                     echo json_encode(['success' => false, 'message' => 'Forbidden']);
@@ -62,6 +65,6 @@ class AuthMiddleware {
             }
             exit();
         }
-        
+
     }
 }

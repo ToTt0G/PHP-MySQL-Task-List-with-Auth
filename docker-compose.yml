@@ -1,6 +1,7 @@
 services:
   task-app-environment:
     container_name: tasks-app_php-apache
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
@@ -28,7 +29,12 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3307:3306"
+    volumes:
+      - db_data:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+
+volumes:
+  db_data:
