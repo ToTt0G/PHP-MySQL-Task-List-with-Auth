@@ -1,0 +1,181 @@
+/* Icon button */
+.icon-button {
+  width: var(--height-1);
+  height: var(--height-1);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--border);
+  background: var(--bg-subtle-accent-1);
+  cursor: pointer;
+  color: var(--muted);
+}
+.icon-button:hover {
+  filter: brightness(1.08);
+}
+
+/* Form layout */
+#task-submit-form {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+}
+#task-submit-form input {
+  padding: 0 1rem;
+}
+#task-submit-form .button {
+  padding: 0 1.2rem;
+}
+
+/* List */
+#task-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 2px;
+  padding-inline-start: 0;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+  min-height: 120px;
+  overflow-y: auto;
+}
+
+/* List items with subtle hover + entry animation */
+#task-list li {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  height: var(--height-1);
+  padding: 0 0 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-subtle-accent-2);
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: fadeInUp 220ms ease forwards;
+}
+#task-list li:hover {
+  background: var(--bg-subtle-accent-1);
+  transform: translateY(-1px);
+}
+
+/* While editing: dashed border (works via :has and via .editing class) */
+#task-list li.editing,
+#task-list li:has(.edit-input) {
+  border-style: dashed;
+}
+
+/* Input that visually blends with the non-editing state */
+#task-list li .edit-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: auto;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: inherit;
+  font: inherit;
+  border-radius: 0;
+  caret-color: var(--text);
+}
+
+/* Optional: ensure placeholder (if any) remains subtle */
+#task-list li .edit-input::placeholder {
+  color: var(--muted);
+}
+
+/* Skeleton loader for task list items */
+#task-list li.skeleton {
+  position: relative;
+  overflow: hidden;
+  border-color: var(--border);
+  --gradient-skeleton-01: light-dark(
+    rgba(255, 255, 255, 0.04),
+    rgba(0, 0, 0, 0.04)
+  );
+  --gradient-skeleton-02: light-dark(
+    rgba(255, 255, 255, 0.09),
+    rgba(0, 0, 0, 0.09)
+  );
+
+  background: linear-gradient(
+    90deg,
+    var(--gradient-skeleton-01) 0%,
+    var(--gradient-skeleton-02) 20%,
+    var(--gradient-skeleton-01) 40%,
+    var(--gradient-skeleton-01) 100%
+  );
+  background-size: 300% 100%;
+  animation: shimmer 1.2s ease-in-out infinite, fadeInUp 220ms ease forwards;
+  pointer-events: none; /* non-interactive while loading */
+}
+
+/* Optional: inner bar to mimic text line */
+#task-list li.skeleton::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 10px;
+  width: var(--width-js);
+  border-radius: 8px;
+  background: var(--bg-subtle-accent-3);
+}
+
+[data-theme="light"] #task-list li.skeleton::after {
+  background: var(--bg-subtle-accent-light);
+}
+
+/* Shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Delete button look */
+.delete-button {
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  width: var(--height-1);
+  height: var(--height-1);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+.delete-button:hover {
+  color: var(--error-accent);
+  transform: translateY(-1px);
+}
+.delete-button svg {
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+}
+
+/* Scrollbar */
+#task-list::-webkit-scrollbar {
+  width: 10px;
+}
+#task-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+#task-list::-webkit-scrollbar-thumb {
+  background: var(--bg-scrollbar-thumb);
+  border-radius: 10px;
+}
+#task-list::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-subtle-accent-3);
+}
