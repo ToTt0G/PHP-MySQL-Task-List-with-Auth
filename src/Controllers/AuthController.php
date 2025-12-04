@@ -21,10 +21,21 @@ class AuthController
         if (strpos($request_uri, '/api/auth') === 0) {
             if ($method === "POST") {
                 // CSRF Protection
-                $headers = getallheaders();
-                $token = $headers['X-CSRF-Token'] ?? '';
+                $token = '';
+                if (function_exists('getallheaders')) {
+                    $headers = array_change_key_case(getallheaders(), CASE_LOWER);
+                    $token = $headers['x-csrf-token'] ?? '';
+                }
+                
+                if (empty($token) && isset($_SERVER['HTTP_X_CSRF_TOKEN'])) {
+                    $token = $_SERVER['HTTP_X_CSRF_TOKEN'];
+                }
                 
                 if (!Csrf::verify($token)) {
+                    error_log("CSRF Verification Failed.");
+                    error_log("Received Token: " . $token);
+                    error_log("Session Token: " . ($_SESSION['csrf_token'] ?? 'NOT SET'));
+                    
                     http_response_code(403);
                     echo json_encode(['error' => 'Invalid CSRF token']);
                     return;
@@ -74,9 +85,10 @@ class AuthController
 
     public function register()
     {
-        $email = htmlspecialchars($_POST["email"], ENT_QUOTES, 'UTF-8');
-        $password = htmlspecialchars($_POST["password"], ENT_QUOTES, 'UTF-8');
-        $name = htmlspecialchars($_POST["name"], ENT_QUOTES, 'UTF-8');
+        $input = $this->getInput();
+        $email = htmlspecialchars($input["email"] ?? '', ENT_QUOTES, 'UTF-8');
+        $password = htmlspecialchars($input["password"] ?? '', ENT_QUOTES, 'UTF-8');
+        $name = htmlspecialchars($input["name"] ?? '', ENT_QUOTES, 'UTF-8');
         $result = $this->usersModel->register($email, $password, $name);
         echo json_encode($result);
         exit;
@@ -84,9 +96,10 @@ class AuthController
 
     public function login()
     {
-        $email = htmlspecialchars($_POST["email"], ENT_QUOTES, 'UTF-8');
-        $password = htmlspecialchars($_POST["password"], ENT_QUOTES, 'UTF-8');
-        $remember_me = isset($_POST['remember_me']);
+        $input = $this->getInput();
+        $email = htmlspecialchars($input["email"] ?? '', ENT_QUOTES, 'UTF-8');
+        $password = htmlspecialchars($input["password"] ?? '', ENT_QUOTES, 'UTF-8');
+        $remember_me = isset($input['remember_me']);
 
         $result = $this->usersModel->login($email, $password);
         if ($result['success']) {
@@ -108,6 +121,18 @@ class AuthController
         }
         echo json_encode($result);
         exit;
+    }
+
+    private function getInput()
+    {
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
+        if (strpos($contentType, 'application/json') !== false) {
+            $input = json_decode(file_get_contents('php://input'), true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($input)) {
+                return $input;
+            }
+        }
+        return $_POST;
     }
 
     public function logout()

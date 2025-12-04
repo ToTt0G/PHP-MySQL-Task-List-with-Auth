@@ -51,6 +51,12 @@ class Sessions
         $stmt = $this->conn->prepare("DELETE FROM sessions WHERE session_token = :session_token");
         return $stmt->execute([':session_token' => $session_hash]);
     }
+    
+    public function deleteSessionById($id)
+    {
+        $stmt = $this->conn->prepare("DELETE FROM sessions WHERE id = :id");
+        return $stmt->execute([':id' => $id]);
+    }
 
     public function refreshSession($session_token)
     {
