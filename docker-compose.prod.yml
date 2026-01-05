@@ -1,16 +1,16 @@
-# docker-compose.yml
-# Purpose: For open-source users and local development.
-# Strategy: "Bind Mounts" (Live syncing).
-# Storage: Standard Docker volumes.
+# docker-compose.prod.yml
+# Purpose: For the basement server environment.
+# Strategy: "Immutable Build" (Code baked into image).
+# Storage: Direct mapping to the 1TB Local SSD (/mnt/fast_data).
 
 services:
   task-app-environment:
     container_name: tasks-app_php-apache
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
-    volumes:
-      - ./:/var/www/html  # <--- LIVE SYNC (Edit on laptop, updates in container)
+    # IMPORTANT: No bind mount - code is COPIED into the image via Dockerfile
     ports:
       - "8081:80"
     command: bash -c "composer install && apache2-foreground"
@@ -23,6 +23,7 @@ services:
   db:
     image: mysql:latest
     container_name: tasks-app_mysql-db
+    restart: unless-stopped
     env_file:
       - ./.env
     environment:
@@ -33,11 +34,9 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - db_data:/var/lib/mysql  # Standard Docker volume (ephemeral for dev)
+      # Map to the fast local SSD, NOT the NAS
+      - /mnt/fast_data/tasks-app_db:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
-
-volumes:
-  db_data:

@@ -1,0 +1,32 @@
+# Git
+.git/
+.gitignore
+
+# Environment and secrets
+.env
+.env.*
+
+# IDE Settings
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS System Files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker files (not needed inside container)
+docker-compose*.yml
+Dockerfile
+.dockerignore
+
+# Documentation
+README.md
+
+# GitHub workflows
+.github/
+github/

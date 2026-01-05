@@ -13,3 +13,14 @@ RUN a2enmod rewrite headers
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set the working directory
+WORKDIR /var/www/html
+
+# Copy application code into the image
+# In development, the bind mount (./:/var/www/html) overrides this
+# In production, this bakes the code into the image
+COPY . .
+
+# Install PHP dependencies (will be re-run on container start in dev)
+RUN composer install --no-dev --optimize-autoloader || true
