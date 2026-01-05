@@ -46,89 +46,103 @@ A simple task management application built with PHP (custom MVC framework), MySQ
 
 - Docker and Docker Compose installed on your machine.
 
-## Setup Instructions
+---
 
-1.  **Clone the repository**:
+## Getting Started (Open Source Users)
 
-    ```bash
-    git clone <repository_url>
-    cd <repository_folder>
-    ```
+This section is for users who want to clone and run the project locally for development or testing.
 
-2.  **Environment Configuration**:
-    Create a `.env` file in the root directory. You can use the following example configuration:
-
-    ```env
-    DB_HOST=db
-    MYSQL_DATABASE=tasks_db
-    MYSQL_USER=user
-    MYSQL_PASSWORD=password
-    MYSQL_ROOT_PASSWORD=root_password
-    ```
-
-3.  **Start the Application**:
-    Run the following command to build and start the containers:
-
-    ```bash
-    docker-compose up -d --build
-    ```
-
-    This command will:
-
-    - Start the MySQL database container.
-    - Build the PHP/Apache container.
-    - Install PHP dependencies via Composer.
-    - Initialize the database tables automatically on the first run (logic in `src/config/db_config.php`).
-
-4.  **Access the Application**:
-    Open your browser and navigate to:
-    ```
-    http://localhost:8081
-    ```
-
-## Docker Management
-
-### Restarting Containers
-
-To restart the application containers (e.g., after a configuration change):
+### 1. Clone the repository
 
 ```bash
-docker-compose restart
+git clone https://github.com/ToTt0G/PHP-MySQL-Task-List-with-Auth.git
+cd PHP-MySQL-Task-List-with-Auth
 ```
 
-### Restarting without Database Disruption
+### 2. Environment Configuration
 
-To rebuild or restart the web application container without stopping the database (preserving the database state and uptime):
+Create a `.env` file in the root directory:
 
-1.  Restart only the PHP/Apache container:
+```env
+DB_HOST=db
+MYSQL_DATABASE=tasks_db
+MYSQL_USER=user
+MYSQL_PASSWORD=password
+MYSQL_ROOT_PASSWORD=root_password
+```
 
-    ```bash
-    docker-compose restart task-app-environment
-    ```
+### 3. Start the Application
 
-2.  If you need to rebuild the image (e.g., after changing the Dockerfile):
-    ```bash
-    docker-compose up -d --no-deps --build task-app-environment
-    ```
-    - `--no-deps`: Don't restart linked services (like the database).
-    - `--build`: Rebuild the image before starting.
+```bash
+docker compose up -d --build
+```
 
-### Resetting the Database
+This will:
+- Start the MySQL database container
+- Build the PHP/Apache container
+- Install PHP dependencies via Composer
+- Auto-initialize database tables on first run
 
-To completely **wipe the database** and start fresh (e.g., to re-register the admin account):
+### 4. Access the Application
 
-1.  Bring down the containers and remove the data volume:
+Open your browser: **http://localhost:8081**
 
-    ```bash
-    docker-compose down -v
-    ```
+### Docker Commands (Development)
 
-2.  Start the application again:
-    ```bash
-    docker-compose up -d
-    ```
+| Command | Description |
+|---------|-------------|
+| `docker compose restart` | Restart all containers |
+| `docker compose restart task-app-environment` | Restart only the app (keeps DB running) |
+| `docker compose up -d --no-deps --build task-app-environment` | Rebuild app image only |
+| `docker compose down -v` | **⚠️ Wipe database** and stop containers |
 
-> **Note**: The database data is currently stored in the `db_data` volume. Running `docker-compose down -v` will destroy this volume and **wipe all data**.
+> **Note**: Code changes sync instantly via bind mount - no rebuild needed for PHP changes.
+
+---
+
+## Developer Deployment (Server)
+
+This section is for deploying to the production server environment.
+
+### Architecture
+
+| Question | Development | Production |
+|----------|-------------|------------|
+| Where does **Code** live? | Bind Mount (`./:/var/www/html`) | Baked into Docker image |
+| Where does **Data** live? | Docker Volume (ephemeral) | `/mnt/fast_data/tasks-app_db` (SSD) |
+| Where do **Secrets** live? | `.env` (local) | `/mnt/code/project/.env` (manual) |
+
+### First-Time Setup (Server)
+
+1. **SSH into the server** and create the production `.env`:
+
+   ```bash
+   ssh ryder@192.168.1.XX
+   cd /mnt/code/PHP-MySQL-Task-List-with-Auth
+   nano .env  # Paste production secrets here
+   ```
+
+### Deploy
+
+Build the image from NAS files and start containers using the fast SSD:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+- `-f docker-compose.prod.yml`: Uses production config
+- `--build`: Bakes latest code into a fresh image
+
+### Production Commands
+
+| Command | Description |
+|---------|-------------|
+| `docker compose -f docker-compose.prod.yml up -d --build` | Deploy/rebuild |
+| `docker compose -f docker-compose.prod.yml restart` | Restart containers |
+| `docker compose -f docker-compose.prod.yml logs -f` | View logs |
+| `docker compose -f docker-compose.prod.yml down` | Stop containers |
+
+> **⚠️ Important**: Database is stored on `/mnt/fast_data/tasks-app_db`, NOT the NAS. Never map DB volumes to `./`.
 
 ## Project Structure
 
