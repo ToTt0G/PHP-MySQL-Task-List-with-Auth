@@ -1,7 +1,7 @@
 # docker-compose.prod.yml
 # Purpose: For the basement server environment.
 # Strategy: "Immutable Build" (Code baked into image).
-# Storage: Direct mapping to the 1TB Local SSD (/mnt/fast_data).
+# Storage: Direct mapping to the 1TB Local SSD (/mnt/data).
 
 services:
   task-app-environment:
@@ -35,7 +35,7 @@ services:
       - "3307:3306"
     volumes:
       # Map to the fast local SSD, NOT the NAS
-      - /mnt/fast_data/tasks-app_db:/var/lib/mysql
+      - /mnt/data/tasks_app_mysql:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s

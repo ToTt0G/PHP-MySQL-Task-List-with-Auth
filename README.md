@@ -109,7 +109,7 @@ This section is for deploying to the production server environment.
 | Question | Development | Production |
 |----------|-------------|------------|
 | Where does **Code** live? | Bind Mount (`./:/var/www/html`) | Baked into Docker image |
-| Where does **Data** live? | Docker Volume (ephemeral) | `/mnt/fast_data/tasks-app_db` (SSD) |
+| Where does **Data** live? | Docker Volume (ephemeral) | `/mnt/data/tasks_app_mysql` (SSD) |
 | Where do **Secrets** live? | `.env` (local) | `/mnt/code/project/.env` (manual) |
 
 ### First-Time Setup (Server)
@@ -142,7 +142,7 @@ docker compose -f docker-compose.prod.yml up -d --build
 | `docker compose -f docker-compose.prod.yml logs -f` | View logs |
 | `docker compose -f docker-compose.prod.yml down` | Stop containers |
 
-> **⚠️ Important**: Database is stored on `/mnt/fast_data/tasks-app_db`, NOT the NAS. Never map DB volumes to `./`.
+> **⚠️ Important**: Database is stored on `/mnt/data/tasks_app_mysql`, NOT the NAS. Never map DB volumes to `./`.
 
 ## Project Structure
 
