@@ -42,36 +42,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   (async () => {
     try {
-      const [users, sessions, tasks] = await Promise.all([
-        fetchJson("/api/admin/all-users"),
-        fetchJson("/api/admin/all-sessions"),
-        fetchJson("/api/admin/all-tasks"),
-      ]);
+      const users = await fetchJson("/api/admin/dashboard-stats");
 
       const container = document.getElementById("user-cards-container");
       if (!container) return;
 
-      const now = new Date();
-
-      // Group current sessions by user_id (filter out expired)
-      const sessionsByUser = sessions
-        .filter((s) => s.expires_at && new Date(s.expires_at) > now)
-        .reduce((acc, s) => {
-          (acc[s.user_id] ||= []).push(s);
-          return acc;
-        }, {});
-
-      // Group tasks by user_id
-      const tasksByUser = tasks.reduce((acc, t) => {
-        (acc[t.user_id] ||= []).push(t);
-        return acc;
-      }, {});
-
       container.innerHTML = "";
 
       users.forEach((u) => {
-        const userSessions = sessionsByUser[u.id] || [];
-        const userTasks = tasksByUser[u.id] || [];
+        const userSessions = u.sessions || [];
+        const userTasks = u.tasks || [];
 
         const card = document.createElement("div");
         card.className = "user-card";

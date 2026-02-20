@@ -83,5 +83,41 @@ class Users
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getUsersWithStats()
+    {
+        // Use COALESCE to return empty array if no sessions/tasks
+        $sql = "
+            SELECT u.id, u.email, u.name, u.role, u.created_at,
+                   COALESCE(s.sessions, '[]') as sessions,
+                   COALESCE(t.tasks, '[]') as tasks
+            FROM users u
+            LEFT JOIN (
+                SELECT user_id,
+                       JSON_ARRAYAGG(JSON_OBJECT('id', id, 'session_token', session_token, 'created_at', created_at, 'expires_at', expires_at)) as sessions
+                FROM sessions
+                WHERE expires_at > NOW()
+                GROUP BY user_id
+            ) s ON u.id = s.user_id
+            LEFT JOIN (
+                SELECT user_id,
+                       JSON_ARRAYAGG(JSON_OBJECT('id', id, 'value', value)) as tasks
+                FROM tasks
+                GROUP BY user_id
+            ) t ON u.id = t.user_id
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Decode JSON strings back to PHP arrays so json_encode in controller works correctly
+        foreach ($results as &$row) {
+            $row['sessions'] = json_decode($row['sessions'], true);
+            $row['tasks'] = json_decode($row['tasks'], true);
+        }
+
+        return $results;
+    }
 }
 ?>
