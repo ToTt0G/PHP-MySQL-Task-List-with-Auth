@@ -108,6 +108,7 @@ class AuthController
 
             $_SESSION['user_id'] = $result['user']['id'];
             $_SESSION['name'] = $result['user']['name'];
+            $_SESSION['role'] = $result['user']['role'];
 
             if ($remember_me) {
                 $session_token = $this->sessionsModel->createSession($result['user']['id']);
