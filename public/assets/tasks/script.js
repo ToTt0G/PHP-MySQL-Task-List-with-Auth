@@ -12,7 +12,7 @@ let tasks = [];
 
 function getCsrfToken() {
   const meta = document.querySelector('meta[name="csrf-token"]');
-  return meta ? meta.getAttribute('content') : '';
+  return meta ? meta.getAttribute("content") : "";
 }
 
 // --- API Layer ---
@@ -26,9 +26,9 @@ const api = {
   async addTask(task) {
     const response = await fetch("api/tasks", {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "X-CSRF-Token": getCsrfToken()
+        "X-CSRF-Token": getCsrfToken(),
       },
       body: `task=${encodeURIComponent(task)}`,
     });
@@ -39,12 +39,12 @@ const api = {
   async editTask(id, task) {
     const response = await fetch("api/tasks", {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "X-CSRF-Token": getCsrfToken()
+        "X-CSRF-Token": getCsrfToken(),
       },
       body: `edit_task_id=${encodeURIComponent(
-        id
+        id,
       )}&edit_task=${encodeURIComponent(task)}`,
     });
     if (!response.ok) throw new Error("Failed to edit task");
@@ -54,9 +54,9 @@ const api = {
   async deleteTask(id) {
     const response = await fetch("api/tasks", {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "X-CSRF-Token": getCsrfToken()
+        "X-CSRF-Token": getCsrfToken(),
       },
       body: `delete_task_id=${encodeURIComponent(id)}`,
     });
@@ -65,11 +65,11 @@ const api = {
   },
 
   async clearAllTasks() {
-    const response = await fetch("api/tasks", { 
+    const response = await fetch("api/tasks", {
       method: "DELETE",
       headers: {
-        "X-CSRF-Token": getCsrfToken()
-      }
+        "X-CSRF-Token": getCsrfToken(),
+      },
     });
     if (!response.ok) throw new Error("Failed to clear tasks");
     return await response.json();
@@ -85,11 +85,11 @@ const api = {
   },
 
   async logout() {
-    const response = await fetch("api/auth/logout", { 
+    const response = await fetch("api/auth/logout", {
       method: "POST",
       headers: {
-        "X-CSRF-Token": getCsrfToken()
-      }
+        "X-CSRF-Token": getCsrfToken(),
+      },
     });
     if (!response.ok) throw new Error("Failed to logout");
     return await response.json();
@@ -295,6 +295,8 @@ async function startShortPolling() {
         tasks = updatedTasks;
         renderTasks();
       }
+      // Wait 3 seconds before next poll to avoid hammering the server
+      await new Promise((resolve) => setTimeout(resolve, 3000));
     } catch (error) {
       // Log polling errors quietly to avoid spamming user with toasts on network hiccups
       console.error("Polling error:", error);
