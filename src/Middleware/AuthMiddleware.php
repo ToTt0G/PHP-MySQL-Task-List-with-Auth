@@ -22,8 +22,15 @@ class AuthMiddleware
             // No need to refresh the 'remember_me' session here.
 
             // Check if the user is an admin
-            $user = self::$usersModel->getUserById($_SESSION['user_id']);
-            if ($user['role'] !== 'admin') {
+            if (isset($_SESSION['role'])) {
+                $role = $_SESSION['role'];
+            } else {
+                $user = self::$usersModel->getUserById($_SESSION['user_id']);
+                $role = $user ? $user['role'] : 'user';
+                $_SESSION['role'] = $role;
+            }
+
+            if ($role !== 'admin') {
                 if (strpos($_SERVER['REQUEST_URI'], '/api/admin') === 0 || strpos($_SERVER['REQUEST_URI'], '/admin') === 0 || preg_match('#^/api/users/\d+#', $_SERVER['REQUEST_URI'])) {
                     header('Content-Type: application/json');
                     http_response_code(403); // Forbidden
@@ -47,6 +54,7 @@ class AuthMiddleware
                         session_regenerate_id(true);
                         $_SESSION['user_id'] = $user['id'];
                         $_SESSION['name'] = $user['name'];
+                        $_SESSION['role'] = $user['role'];
                         // The user is now logged in, you can proceed.
                         header('Location: /tasks');
                         exit();
