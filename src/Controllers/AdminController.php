@@ -66,6 +66,12 @@ class AdminController
                 return;
             }
 
+            if ($request_uri === '/api/admin/dashboard-stats') {
+                $stats = $this->usersModel->getUsersWithStats();
+                echo json_encode($stats);
+                return;
+            }
+
             // Handle dynamic route /api/admin/users/{id}
             if (preg_match('#^/api/admin/users/([a-zA-Z0-9-]+)$#', $request_uri, $matches)) {
                 $id = $matches[1];

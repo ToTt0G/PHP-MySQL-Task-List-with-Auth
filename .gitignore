@@ -2,6 +2,7 @@ vendor/
 .env
 000-default.conf
 public/assets/styles copy.css
+node_modules/
 
 # OS System Files
 .DS_Store
